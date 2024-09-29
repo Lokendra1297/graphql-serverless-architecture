@@ -1,0 +1,48 @@
+service: graphql-lambda
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  environment:
+    GRAPHQL_API: "http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql"
+
+functions:
+  queryHandler:
+    handler: src/queries.handler
+    vpc:
+      securityGroupIds:
+        - sg-0de52385816a518a1
+      subnetIds:
+        - subnet-08f5e0e42db9c47e0
+        - subnet-041fe910fb6b96cd7
+    events:
+      - http:
+          path: graphql/query
+          method: post
+
+  mutationHandler:
+    handler: src/mutations.handler
+    vpc:
+      securityGroupIds:
+        - sg-0de52385816a518a1
+      subnetIds:
+        - subnet-08f5e0e42db9c47e0
+        - subnet-041fe910fb6b96cd7
+    events:
+      - http:
+          path: graphql/mutation
+          method: post
+
+  subscriptionHandler:
+    handler: src/subscriptions.handler
+    vpc:
+      securityGroupIds:
+        - sg-0de52385816a518a1
+      subnetIds:
+        - subnet-08f5e0e42db9c47e0
+        - subnet-041fe910fb6b96cd7
+    events:
+      - http:
+          path: graphql/subscription
+          method: post

@@ -1,0 +1,839 @@
+{
+  "/home/lokendra.rathore@hs.local/new-task/graphql-lambda": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.3",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>"
+    },
+    "composeServiceName": null,
+    "servicePath": "/home/lokendra.rathore@hs.local/new-task/graphql-lambda",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "graphql-lambda",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs18.x",
+        "region": "ap-south-1",
+        "environment": {
+          "GRAPHQL_API": "http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql"
+        },
+        "stage": "dev",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "QueryHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/graphql-lambda-dev-queryHandler"
+              }
+            },
+            "MutationHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/graphql-lambda-dev-mutationHandler"
+              }
+            },
+            "SubscriptionHandlerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/graphql-lambda-dev-subscriptionHandler"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "graphql-lambda",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/graphql-lambda-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/graphql-lambda-dev*:*:*"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "graphql-lambda",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                },
+                "ManagedPolicyArns": [
+                  {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                      ]
+                    ]
+                  }
+                ]
+              }
+            },
+            "QueryHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-b123b482-aac2",
+                  "S3Key": "serverless/graphql-lambda/dev/1727587444399-2024-09-29T05:24:04.399Z/graphql-lambda.zip"
+                },
+                "Handler": "src/queries.handler",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "graphql-lambda-dev-queryHandler",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "GRAPHQL_API": "http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql",
+                    "NODE_OPTIONS": "--enable-source-maps"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-0de52385816a518a1"
+                  ],
+                  "SubnetIds": [
+                    "subnet-08f5e0e42db9c47e0",
+                    "subnet-041fe910fb6b96cd7"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "QueryHandlerLogGroup"
+              ]
+            },
+            "MutationHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-b123b482-aac2",
+                  "S3Key": "serverless/graphql-lambda/dev/1727587444399-2024-09-29T05:24:04.399Z/graphql-lambda.zip"
+                },
+                "Handler": "src/mutations.handler",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "graphql-lambda-dev-mutationHandler",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "GRAPHQL_API": "http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql",
+                    "NODE_OPTIONS": "--enable-source-maps"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-0de52385816a518a1"
+                  ],
+                  "SubnetIds": [
+                    "subnet-08f5e0e42db9c47e0",
+                    "subnet-041fe910fb6b96cd7"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "MutationHandlerLogGroup"
+              ]
+            },
+            "SubscriptionHandlerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-ap-south-1-b123b482-aac2",
+                  "S3Key": "serverless/graphql-lambda/dev/1727587444399-2024-09-29T05:24:04.399Z/graphql-lambda.zip"
+                },
+                "Handler": "src/subscriptions.handler",
+                "Runtime": "nodejs18.x",
+                "FunctionName": "graphql-lambda-dev-subscriptionHandler",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "GRAPHQL_API": "http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql",
+                    "NODE_OPTIONS": "--enable-source-maps"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                },
+                "VpcConfig": {
+                  "SecurityGroupIds": [
+                    "sg-0de52385816a518a1"
+                  ],
+                  "SubnetIds": [
+                    "subnet-08f5e0e42db9c47e0",
+                    "subnet-041fe910fb6b96cd7"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "SubscriptionHandlerLogGroup"
+              ]
+            },
+            "QueryHandlerLambdaVersiont1g4W3pSCPDQesX1TGDi1rqdJFhm6tgYwhFamQvdkI": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "QueryHandlerLambdaFunction"
+                },
+                "CodeSha256": "RDyDhJOTS7lyn3NvFbGyND0+7NEZu5F3zNBMvbdZK0I="
+              }
+            },
+            "MutationHandlerLambdaVersionPKgo74XQrXCzae3hCCBfcWAhb7zmQgZtJPhw2aBkuQ": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "MutationHandlerLambdaFunction"
+                },
+                "CodeSha256": "RDyDhJOTS7lyn3NvFbGyND0+7NEZu5F3zNBMvbdZK0I="
+              }
+            },
+            "SubscriptionHandlerLambdaVersioniLTWhC95SEtKLQDR0bkXh2kAMSJbACVkE1V34oYCxo": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "SubscriptionHandlerLambdaFunction"
+                },
+                "CodeSha256": "RDyDhJOTS7lyn3NvFbGyND0+7NEZu5F3zNBMvbdZK0I="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "dev-graphql-lambda",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceGraphql": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "graphql",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceGraphqlQuery": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceGraphql"
+                },
+                "PathPart": "query",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceGraphqlMutation": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceGraphql"
+                },
+                "PathPart": "mutation",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayResourceGraphqlSubscription": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Ref": "ApiGatewayResourceGraphql"
+                },
+                "PathPart": "subscription",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodGraphqlQueryPost": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "POST",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceGraphqlQuery"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "QueryHandlerLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "QueryHandlerLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodGraphqlMutationPost": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "POST",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceGraphqlMutation"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "MutationHandlerLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "MutationHandlerLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayMethodGraphqlSubscriptionPost": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "POST",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceGraphqlSubscription"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "SubscriptionHandlerLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "SubscriptionHandlerLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1727587440052": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "dev"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodGraphqlQueryPost",
+                "ApiGatewayMethodGraphqlMutationPost",
+                "ApiGatewayMethodGraphqlSubscriptionPost"
+              ]
+            },
+            "QueryHandlerLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "QueryHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "MutationHandlerLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "MutationHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            },
+            "SubscriptionHandlerLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "SubscriptionHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-ap-south-1-b123b482-aac2",
+              "Export": {
+                "Name": "sls-graphql-lambda-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "QueryHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "QueryHandlerLambdaVersiont1g4W3pSCPDQesX1TGDi1rqdJFhm6tgYwhFamQvdkI"
+              },
+              "Export": {
+                "Name": "sls-graphql-lambda-dev-QueryHandlerLambdaFunctionQualifiedArn"
+              }
+            },
+            "MutationHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "MutationHandlerLambdaVersionPKgo74XQrXCzae3hCCBfcWAhb7zmQgZtJPhw2aBkuQ"
+              },
+              "Export": {
+                "Name": "sls-graphql-lambda-dev-MutationHandlerLambdaFunctionQualifiedArn"
+              }
+            },
+            "SubscriptionHandlerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "SubscriptionHandlerLambdaVersioniLTWhC95SEtKLQDR0bkXh2kAMSJbACVkE1V34oYCxo"
+              },
+              "Export": {
+                "Name": "sls-graphql-lambda-dev-SubscriptionHandlerLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/dev"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-graphql-lambda-dev-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "functions": {
+        "queryHandler": {
+          "handler": "src/queries.handler",
+          "vpc": {
+            "securityGroupIds": [
+              "sg-0de52385816a518a1"
+            ],
+            "subnetIds": [
+              "subnet-08f5e0e42db9c47e0",
+              "subnet-041fe910fb6b96cd7"
+            ]
+          },
+          "events": [
+            {
+              "http": {
+                "path": "graphql/query",
+                "method": "post",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "graphql-lambda-dev-queryHandler",
+          "environment": {
+            "NODE_OPTIONS": "--enable-source-maps"
+          },
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "versionLogicalId": "QueryHandlerLambdaVersiont1g4W3pSCPDQesX1TGDi1rqdJFhm6tgYwhFamQvdkI"
+        },
+        "mutationHandler": {
+          "handler": "src/mutations.handler",
+          "vpc": {
+            "securityGroupIds": [
+              "sg-0de52385816a518a1"
+            ],
+            "subnetIds": [
+              "subnet-08f5e0e42db9c47e0",
+              "subnet-041fe910fb6b96cd7"
+            ]
+          },
+          "events": [
+            {
+              "http": {
+                "path": "graphql/mutation",
+                "method": "post",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "graphql-lambda-dev-mutationHandler",
+          "environment": {
+            "NODE_OPTIONS": "--enable-source-maps"
+          },
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "versionLogicalId": "MutationHandlerLambdaVersionPKgo74XQrXCzae3hCCBfcWAhb7zmQgZtJPhw2aBkuQ"
+        },
+        "subscriptionHandler": {
+          "handler": "src/subscriptions.handler",
+          "vpc": {
+            "securityGroupIds": [
+              "sg-0de52385816a518a1"
+            ],
+            "subnetIds": [
+              "subnet-08f5e0e42db9c47e0",
+              "subnet-041fe910fb6b96cd7"
+            ]
+          },
+          "events": [
+            {
+              "http": {
+                "path": "graphql/subscription",
+                "method": "post",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "graphql-lambda-dev-subscriptionHandler",
+          "environment": {
+            "NODE_OPTIONS": "--enable-source-maps"
+          },
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "nodejs18.x",
+          "versionLogicalId": "SubscriptionHandlerLambdaVersioniLTWhC95SEtKLQDR0bkXh2kAMSJbACVkE1V34oYCxo"
+        }
+      }
+    },
+    "serviceRawFile": "service: graphql-lambda\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: ap-south-1\n  environment:\n    GRAPHQL_API: \"http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql\"\n\nfunctions:\n  queryHandler:\n    handler: src/queries.handler\n    vpc:\n      securityGroupIds:\n        - sg-0de52385816a518a1\n      subnetIds:\n        - subnet-08f5e0e42db9c47e0\n        - subnet-041fe910fb6b96cd7\n    events:\n      - http:\n          path: graphql/query\n          method: post\n\n  mutationHandler:\n    handler: src/mutations.handler\n    vpc:\n      securityGroupIds:\n        - sg-0de52385816a518a1\n      subnetIds:\n        - subnet-08f5e0e42db9c47e0\n        - subnet-041fe910fb6b96cd7\n    events:\n      - http:\n          path: graphql/mutation\n          method: post\n\n  subscriptionHandler:\n    handler: src/subscriptions.handler\n    vpc:\n      securityGroupIds:\n        - sg-0de52385816a518a1\n      subnetIds:\n        - subnet-08f5e0e42db9c47e0\n        - subnet-041fe910fb6b96cd7\n    events:\n      - http:\n          path: graphql/subscription\n          method: post\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "debug": "*"
+    },
+    "error": null,
+    "params": {},
+    "machineId": "5366143c047623b3dc3ee8b2ba7460cc",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "29a8a5e9-4271-4271-8585-e6b237b377b7",
+    "orgName": "myselfdevops",
+    "userId": "XpdNF9k51n069ncmHG",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "myselfdevops",
+    "subscription": null,
+    "userEmail": "lokendrasr12@gmail.com",
+    "serviceProviderAwsRegion": "ap-south-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "050451404045",
+    "projectType": "traditional",
+    "versionSf": "4.4.3",
+    "serviceProviderAwsCfStackName": "graphql-lambda-dev",
+    "integrations": {},
+    "serviceUniqueId": "arn:aws:cloudformation:ap-south-1:050451404045:stack/graphql-lambda-dev/0e3404e0-7e23-11ef-9f98-06596f2ff301",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:ap-south-1:050451404045:stack/graphql-lambda-dev/0e3404e0-7e23-11ef-9f98-06596f2ff301",
+    "serviceProviderAwsCfStackCreated": "2024-09-29T05:24:10.010Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "SubscriptionHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:050451404045:function:graphql-lambda-dev-subscriptionHandler:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-graphql-lambda-dev-SubscriptionHandlerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "QueryHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:050451404045:function:graphql-lambda-dev-queryHandler:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-graphql-lambda-dev-QueryHandlerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "MutationHandlerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:ap-south-1:050451404045:function:graphql-lambda-dev-mutationHandler:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-graphql-lambda-dev-MutationHandlerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://egarth4ozl.execute-api.ap-south-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-graphql-lambda-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-ap-south-1-b123b482-aac2",
+        "ExportName": "sls-graphql-lambda-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}
