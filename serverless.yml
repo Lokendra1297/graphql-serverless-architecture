@@ -6,28 +6,13 @@ provider:
   region: ap-south-1
   environment:
     GRAPHQL_API: "http://graphqlALB-new-2126789469.ap-south-1.elb.amazonaws.com/graphql"
+    DYNAMODB_TABLE: "mytable" # Add this line for table name
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "dynamodb:*"  # Specify actions as needed
       Resource:
         - "arn:aws:dynamodb:ap-south-1:050451404045:table/mytable"
-
-resources:
-  Resources:
-    MyDynamoDBTable:
-      Type: "AWS::DynamoDB::Table"
-      Properties:
-        TableName: mytable
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
 
 functions:
   queryHandler:
