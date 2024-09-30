@@ -835,5 +835,23 @@
         "ExportName": "sls-graphql-lambda-dev-ServerlessDeploymentBucketName"
       }
     ]
+  },
+  "unknown": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.3",
+    "isWithinCompose": false,
+    "composeOrgName": null,
+    "composeServiceName": null,
+    "command": [
+      "login"
+    ],
+    "options": {},
+    "error": null,
+    "machineId": "5366143c047623b3dc3ee8b2ba7460cc",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
   }
 }

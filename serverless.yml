@@ -5,44 +5,93 @@ provider:
   runtime: nodejs18.x
   region: ap-south-1
   environment:
-    GRAPHQL_API: "http://graphqlalb-893278713.ap-south-1.elb.amazonaws.com/graphql"
+    GRAPHQL_API: "http://graphqlALB-new-2126789469.ap-south-1.elb.amazonaws.com/graphql"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"  # Specify actions as needed
+      Resource:
+        - "arn:aws:dynamodb:ap-south-1:050451404045:table/mytable"
+
+resources:
+  Resources:
+    MyDynamoDBTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: mytable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 functions:
   queryHandler:
     handler: src/queries.handler
     vpc:
       securityGroupIds:
-        - sg-0de52385816a518a1
+        - sg-04a29d4b727e5fbe9
       subnetIds:
-        - subnet-08f5e0e42db9c47e0
-        - subnet-041fe910fb6b96cd7
+        - subnet-06ea1861364e350f7
+        - subnet-0780d3bf402de5b29
     events:
       - http:
           path: graphql/query
           method: post
+          cors:
+            origin: 'http://mywebsite-graphql.s3-website.ap-south-1.amazonaws.com' # Your React app S3 URL
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
 
   mutationHandler:
     handler: src/mutations.handler
     vpc:
       securityGroupIds:
-        - sg-0de52385816a518a1
+        - sg-04a29d4b727e5fbe9
       subnetIds:
-        - subnet-08f5e0e42db9c47e0
-        - subnet-041fe910fb6b96cd7
+        - subnet-06ea1861364e350f7
+        - subnet-0780d3bf402de5b29
     events:
       - http:
           path: graphql/mutation
           method: post
+          cors:
+            origin: 'http://mywebsite-graphql.s3-website.ap-south-1.amazonaws.com'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
 
   subscriptionHandler:
     handler: src/subscriptions.handler
     vpc:
       securityGroupIds:
-        - sg-0de52385816a518a1
+        - sg-04a29d4b727e5fbe9
       subnetIds:
-        - subnet-08f5e0e42db9c47e0
-        - subnet-041fe910fb6b96cd7
+        - subnet-06ea1861364e350f7
+        - subnet-0780d3bf402de5b29
     events:
       - http:
           path: graphql/subscription
           method: post
+          cors:
+            origin: 'http://mywebsite-graphql.s3-website.ap-south-1.amazonaws.com'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+            allowCredentials: true
