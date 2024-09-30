@@ -17,6 +17,7 @@ provider:
 functions:
   queryHandler:
     handler: src/queries.handler
+    timeout: 15
     vpc:
       securityGroupIds:
         - sg-04a29d4b727e5fbe9
@@ -39,6 +40,7 @@ functions:
 
   mutationHandler:
     handler: src/mutations.handler
+    timeout: 15
     vpc:
       securityGroupIds:
         - sg-04a29d4b727e5fbe9
@@ -61,6 +63,7 @@ functions:
 
   subscriptionHandler:
     handler: src/subscriptions.handler
+    timeout: 15
     vpc:
       securityGroupIds:
         - sg-04a29d4b727e5fbe9
