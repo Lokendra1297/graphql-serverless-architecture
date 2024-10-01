@@ -27,4 +27,22 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-south-1'
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        run: npx serverless deploy
+        run: |
+          npx serverless deploy
+        continue-on-error: true  # Continue even if the deploy step fails
+
+      - name: Get Previous Deployment Timestamp
+        if: failure()  # Only run if the deploy step failed
+        run: |
+          echo "Deployment failed, retrieving last successful deployment timestamp..."
+          npx serverless deploy list --stage dev --region ap-south-1 > deploy_list.txt
+          # Extract the second most recent timestamp (last successful deployment)
+          export ROLLBACK_TIMESTAMP=$(sed -n '3p' deploy_list.txt | awk '{print $2}')
+          echo "Found rollback timestamp: $ROLLBACK_TIMESTAMP"
+          echo "ROLLBACK_TIMESTAMP=$ROLLBACK_TIMESTAMP" >> $GITHUB_ENV  # Save to GitHub environment variable
+
+      - name: Rollback on Failure
+        if: failure()  # Only run if the deploy step failed
+        run: |
+          echo "Rolling back to previous successful deployment..."
+          npx serverless rollback -t $ROLLBACK_TIMESTAMP
